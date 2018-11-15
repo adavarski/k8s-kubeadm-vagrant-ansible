@@ -1,0 +1,11 @@
+
+## ENVs ##
+red=`tput setaf 1`
+green=`tput setaf 2`
+yellow=`tput setaf 3`
+reset=`tput sgr0`
+
+alias ll="ls -lah"
+alias k="kubectl"
+
+# export {http,https,ftp}_proxy='http://proxy.fhm.de:8080'

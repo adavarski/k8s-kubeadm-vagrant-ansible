@@ -1,0 +1,61 @@
+---
+
+- name: Ensure swap is disabled
+  command: swapoff -a
+  tags: [docker]
+
+- name: Ensure depdencies are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+  tags: [docker]
+
+- name: Add Docker apt key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+  register: add_repository_key
+  ignore_errors: true
+  tags: [docker]
+
+- name: Add Docker Key
+  apt_repository:
+    repo: 'deb [arch={{ docker_arch }}] https://download.docker.com/linux/{{ docker_dist }} {{ docker_dist_v }} {{ docker_channel }}'
+    filename: docker
+    state: present
+  tags: [docker]
+
+- name: Update APT Cache
+  apt:
+    update_cache: yes
+  tags: [docker]
+
+- name: Installing docker...
+  apt:
+    name: docker-ce={{ docker_version }}
+  tags: [docker]
+
+- name: Add Docker systemd file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items: "{{ configs }}"
+  tags: [docker]
+
+- name: Ensure systemd is reloaded
+  systemd: daemon_reload=yes
+  tags: [docker]
+  
+- name: Restarting Docker...
+  systemd:
+    name: docker.service
+    state: restarted
+    daemon_reload: yes
+  tags: [docker]

@@ -1,0 +1,27 @@
+apiVersion: kubeadm.k8s.io/v1alpha1
+kind: MasterConfiguration
+api:
+  advertiseAddress: {{ ip }}
+etcd:
+  endpoints:
+{% for node in groups['etcd'] %}
+  - {{ etcd_prot }}://{{ node }}:{{ etcd_client_port }}
+{% endfor %}
+  caFile: {{ etcd_cert_dir }}/ca.pem
+  certFile: {{ etcd_cert_dir }}/client.pem
+  keyFile: {{ etcd_cert_dir }}/client-key.pem
+  dataDir: {{ etcd_data_dir }}
+networking:
+  podSubnet: {{ pod_network_cidr }}
+kubernetesVersion: {{ kube_version }}
+token: {{ kube_token }}
+nodeName: {{ hostname }}
+controllerManagerExtraArgs:
+  pod-eviction-timeout: 3s
+  node-monitor-grace-period: 6s
+  service-sync-period: 2s
+  deployment-controller-sync-period: 2s
+  allocate-node-cidrs: "false"
+  service-cluster-ip-range: "10.11.12.0/24"
+apiServerExtraArgs:
+  feature-gates: PersistentLocalVolumes=true

@@ -1,5 +1,5 @@
 This combination of Vagrant, Ansible and Kubeadm will give you a running Kubernetes Cluster within a few seconds. 
-While I'm still working on HA features (see branches), ETCD is already clustered and equipped with TLS!
+, ETCD is already clustered and equipped with TLS!
 
 ## How to start
 Install Vagrant on your machine. Then start your VMs with a simple "vagrant up", afterwards you'll have 4 running VMs not knowing each other very good.
